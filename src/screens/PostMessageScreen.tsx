@@ -13,6 +13,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Input, Card } from '../components';
 import { theme } from '../theme';
 import { useWeb3 } from '../context/Web3Context';
+import { MAX_MESSAGE_LENGTH, NETWORK_NAMES } from '../utils/constants';
 
 type PostMessageScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -26,12 +27,12 @@ interface PostMessageScreenProps {
 export const PostMessageScreen: React.FC<PostMessageScreenProps> = ({
   navigation,
 }) => {
-  const { account } = useWeb3();
+  const { account, chainId } = useWeb3();
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const maxLength = 280;
-  const remainingChars = maxLength - message.length;
+  const remainingChars = MAX_MESSAGE_LENGTH - message.length;
+  const networkName = chainId ? NETWORK_NAMES[chainId] || 'Unknown' : 'Ethereum';
 
   const handlePost = async () => {
     if (!message.trim()) {
@@ -39,8 +40,8 @@ export const PostMessageScreen: React.FC<PostMessageScreenProps> = ({
       return;
     }
 
-    if (message.length > maxLength) {
-      Alert.alert('Error', `Message must be ${maxLength} characters or less`);
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      Alert.alert('Error', `Message must be ${MAX_MESSAGE_LENGTH} characters or less`);
       return;
     }
 
@@ -90,7 +91,7 @@ export const PostMessageScreen: React.FC<PostMessageScreenProps> = ({
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Network:</Text>
-            <Text style={styles.infoValue}>Ethereum</Text>
+            <Text style={styles.infoValue}>{networkName}</Text>
           </View>
         </Card>
 
@@ -102,7 +103,7 @@ export const PostMessageScreen: React.FC<PostMessageScreenProps> = ({
             onChangeText={setMessage}
             multiline
             numberOfLines={6}
-            maxLength={maxLength}
+            maxLength={MAX_MESSAGE_LENGTH}
             style={styles.textArea}
             containerStyle={styles.inputWrapper}
           />

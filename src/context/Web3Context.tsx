@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ethers } from 'ethers';
+import { DEMO_WALLET_ADDRESS, DEFAULT_CHAIN_ID } from '../utils/constants';
 
 // For React Native, we use a more flexible provider type
 // In production, this would be from WalletConnect or similar
@@ -44,12 +45,11 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
       console.log('Connecting wallet...');
       
       // Simulate wallet connection with a demo address
-      const demoAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
-      setAccount(demoAddress);
+      setAccount(DEMO_WALLET_ADDRESS);
       setIsConnected(true);
-      setChainId(1); // Ethereum mainnet
+      setChainId(DEFAULT_CHAIN_ID);
       
-      console.log('Wallet connected:', demoAddress);
+      console.log('Wallet connected:', DEMO_WALLET_ADDRESS);
     } catch (error) {
       console.error('Error connecting wallet:', error);
       throw error;
