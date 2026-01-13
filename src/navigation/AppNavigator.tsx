@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen, PostMessageScreen } from '../screens';
 import { theme } from '../theme';
 
+// Centralized navigation types
 export type RootStackParamList = {
   Home: undefined;
   PostMessage: undefined;

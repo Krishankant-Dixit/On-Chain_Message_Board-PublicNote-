@@ -9,14 +9,10 @@ import {
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Input, Card } from '../components';
 import { theme } from '../theme';
 import { useWeb3 } from '../context/Web3Context';
-
-type RootStackParamList = {
-  Home: undefined;
-  PostMessage: undefined;
-};
 
 type PostMessageScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

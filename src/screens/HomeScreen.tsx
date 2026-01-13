@@ -9,15 +9,11 @@ import {
   Alert,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
 import { useWeb3 } from '../context/Web3Context';
 import { Button, MessageCard } from '../components';
 import { theme } from '../theme';
 import { Message } from '../utils/helpers';
-
-type RootStackParamList = {
-  Home: undefined;
-  PostMessage: undefined;
-};
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 

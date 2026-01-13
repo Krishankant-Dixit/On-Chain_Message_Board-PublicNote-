@@ -1,9 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ethers } from 'ethers';
 
+// For React Native, we use a more flexible provider type
+// In production, this would be from WalletConnect or similar
+type Web3Provider = ethers.Provider | null;
+type Web3Signer = ethers.Signer | null;
+
 interface Web3ContextType {
-  provider: ethers.BrowserProvider | null;
-  signer: ethers.JsonRpcSigner | null;
+  provider: Web3Provider;
+  signer: Web3Signer;
   account: string | null;
   isConnected: boolean;
   chainId: number | null;
@@ -26,8 +31,8 @@ interface Web3ProviderProps {
 }
 
 export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
-  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
-  const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null);
+  const [provider, setProvider] = useState<Web3Provider>(null);
+  const [signer, setSigner] = useState<Web3Signer>(null);
   const [account, setAccount] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [chainId, setChainId] = useState<number | null>(null);
@@ -35,7 +40,7 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
   const connectWallet = async () => {
     try {
       // For demo purposes, we'll simulate a connection
-      // In a real app, you'd use WalletConnect or similar
+      // In a real app, you'd use WalletConnect or similar mobile wallet provider
       console.log('Connecting wallet...');
       
       // Simulate wallet connection with a demo address
