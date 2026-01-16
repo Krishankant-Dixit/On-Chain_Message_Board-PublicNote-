@@ -50,13 +50,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const handleWalletLogin = async () => {
     setLoading(true);
     try {
-      await connectWallet();
-      // Wait for account to be set
-      setTimeout(async () => {
-        if (account) {
-          await loginWithWallet(account);
-        }
-      }, 500);
+      const walletAddress = await connectWallet();
+      await loginWithWallet(walletAddress);
     } catch (error) {
       Alert.alert('Error', 'Failed to connect wallet. Please try again.');
     } finally {

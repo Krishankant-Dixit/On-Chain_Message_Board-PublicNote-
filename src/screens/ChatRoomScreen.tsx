@@ -130,7 +130,7 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
           oldContent: msg.content,
           newContent: inputText,
           editedAt: Date.now() / 1000,
-          blockchainHash: `0x${Math.random().toString(36).substr(2, 9)}`,
+          blockchainHash: `0x${Math.random().toString(36).slice(2, 11)}`,
         });
 
         return {

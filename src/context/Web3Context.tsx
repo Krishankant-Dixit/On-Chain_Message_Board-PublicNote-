@@ -13,7 +13,7 @@ interface Web3ContextType {
   account: string | null;
   isConnected: boolean;
   chainId: number | null;
-  connectWallet: () => Promise<void>;
+  connectWallet: () => Promise<string>;
   disconnectWallet: () => void;
 }
 
@@ -50,6 +50,7 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
       setChainId(DEFAULT_CHAIN_ID);
       
       console.log('Wallet connected:', DEMO_WALLET_ADDRESS);
+      return DEMO_WALLET_ADDRESS;
     } catch (error) {
       console.error('Error connecting wallet:', error);
       throw error;

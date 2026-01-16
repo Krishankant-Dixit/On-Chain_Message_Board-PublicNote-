@@ -62,9 +62,9 @@ export const formatTimestamp = (timestamp: number): string => {
 };
 
 export const generateRoomId = (): string => {
-  return `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `room_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 };
 
 export const generateCompanyId = (): string => {
-  return `company_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `company_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 };
