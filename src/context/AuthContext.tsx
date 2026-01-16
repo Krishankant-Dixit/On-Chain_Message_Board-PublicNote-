@@ -19,7 +19,7 @@ interface AuthContextType {
   loginWithEmail: (email: string, password: string) => Promise<void>;
   loginWithWallet: (walletAddress: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (user: Partial<User>) => void;
+  updateUser: (user: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -110,11 +110,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const updateUser = (updates: Partial<User>) => {
+  const updateUser = async (updates: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
-      AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedUser));
+      try {
+        await AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error('Error updating user in storage:', error);
+      }
     }
   };
 
