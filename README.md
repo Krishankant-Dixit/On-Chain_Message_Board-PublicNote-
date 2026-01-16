@@ -1,15 +1,19 @@
-# On-Chain Message Board
+# Company-Focused Social Messaging Application
 
-A mobile-first decentralized message board application built with React Native and Expo. Users can connect their crypto wallet, post messages, and read messages stored on-chain via smart contracts.
+A mobile-first blockchain-powered messaging application built with React Native and Expo. Supports private and public chat rooms with immutable, tamper-proof messages stored on blockchain. Features include message editing with full history tracking, company-wide conversations, and dual authentication (email or blockchain wallet).
 
 ## Features
 
-- 🔗 **Web3 Integration**: Connect crypto wallets to interact with the blockchain
-- 💬 **On-Chain Messages**: Post and read messages stored permanently on-chain
-- 🌙 **Dark Web3 Design**: Modern, sleek dark-themed UI inspired by Web3 aesthetics
+- 🔐 **Dual Authentication**: Login via email or blockchain wallet
+- 💬 **Chat Rooms**: Create and join public, private, or company-specific rooms
+- ⛓️ **Blockchain Integration**: All messages are immutable and tamper-proof
+- ✏️ **Edit History**: Edit messages while preserving full history on blockchain (like WhatsApp)
+- 🏢 **Company Support**: Dedicated spaces for company-wide communication
+- 👥 **Group Conversations**: Support for team and group discussions
+- 🔒 **High Security**: End-to-end encrypted private rooms with secure storage
+- 🌙 **Modern UI**: Sleek, dark-themed Web3-inspired interface
 - 📱 **Mobile-First**: Optimized for mobile devices with smooth navigation
 - ⚡ **Expo Go Compatible**: Test instantly using the Expo Go app
-- 🎨 **Modern UI Components**: Clean, reusable components with consistent design
 
 ## Tech Stack
 
@@ -63,15 +67,21 @@ npm start
 │   │   ├── Button.tsx
 │   │   ├── Card.tsx
 │   │   ├── Input.tsx
-│   │   └── MessageCard.tsx
+│   │   ├── MessageCard.tsx
+│   │   └── LoadingScreen.tsx
 │   ├── context/          # React context providers
-│   │   └── Web3Context.tsx
+│   │   ├── AuthContext.tsx      # Authentication state management
+│   │   └── Web3Context.tsx      # Web3 wallet integration
 │   ├── contracts/        # Smart contract ABIs and addresses
 │   │   └── MessageBoard.ts
 │   ├── navigation/       # Navigation configuration
 │   │   └── AppNavigator.tsx
 │   ├── screens/          # Application screens
-│   │   ├── HomeScreen.tsx
+│   │   ├── LoginScreen.tsx      # Email/Wallet authentication
+│   │   ├── ChatRoomsScreen.tsx  # List of chat rooms
+│   │   ├── ChatRoomScreen.tsx   # Individual chat room
+│   │   ├── CreateRoomScreen.tsx # Create new rooms
+│   │   ├── HomeScreen.tsx       # Legacy message board
 │   │   └── PostMessageScreen.tsx
 │   ├── theme/            # Design system and styling
 │   │   ├── colors.ts
@@ -79,7 +89,8 @@ npm start
 │   │   ├── typography.ts
 │   │   └── index.ts
 │   └── utils/            # Helper functions
-│       └── helpers.ts
+│       ├── helpers.ts
+│       └── constants.ts
 ├── assets/               # Images and static files
 ├── App.tsx               # Root component
 ├── app.json              # Expo configuration
@@ -114,21 +125,37 @@ The app uses a consistent dark Web3-inspired design system:
 
 ## Features in Detail
 
-### Wallet Connection
-- Connect Web3 wallets to interact with the blockchain
-- Display connected wallet address
-- Disconnect functionality
+### Authentication
+- Dual login methods: Email/Password or Blockchain Wallet
+- Persistent session storage with AsyncStorage
+- Secure authentication flow with demo mode for testing
 
-### Message Board
-- View all on-chain messages in a clean feed
-- Pull-to-refresh for latest messages
-- Message cards show sender address and timestamp
+### Chat Rooms
+- **Public Rooms**: Open for everyone to join and participate
+- **Private Rooms**: Invitation-only spaces for confidential discussions
+- **Company Rooms**: Dedicated channels for company-wide communication
+- Room filtering by type
+- Member management and room metadata
 
-### Post Message
-- Post messages up to 280 characters
-- Character counter with validation
-- Gas fee information
-- Confirmation alerts
+### Message Features
+- Real-time message sending and receiving
+- **Immutable Storage**: All messages stored on blockchain
+- **Edit with History**: Update messages while preserving complete edit history
+- **Tamper-Proof**: Original content always accessible via blockchain
+- Edit indicators and timestamp tracking
+- Long-press to view edit history or edit own messages
+
+### Room Management
+- Create new rooms with customizable settings
+- Set room type (public/private/company)
+- Add descriptions and metadata
+- Manage room members
+
+### Security & Privacy
+- Blockchain-based message immutability
+- Secure authentication with persistent storage
+- Access control for private rooms
+- Edit history permanently recorded on blockchain
 
 ## Development
 

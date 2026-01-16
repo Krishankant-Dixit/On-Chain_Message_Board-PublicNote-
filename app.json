@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "On-Chain Message Board",
-    "slug": "on-chain-message-board",
+    "name": "Company Message Board",
+    "slug": "company-message-board",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.onchain.messageboard"
+      "bundleIdentifier": "com.company.messageboard"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.onchain.messageboard"
+      "package": "com.company.messageboard"
     },
     "web": {
       "favicon": "./assets/favicon.png"
