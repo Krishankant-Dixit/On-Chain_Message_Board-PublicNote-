@@ -1,8 +1,42 @@
+// Extended Message type with edit history and room support
 export interface Message {
   id: number;
   content: string;
   sender: string;
   timestamp: number;
+  roomId?: string;
+  isPrivate?: boolean;
+  editHistory?: MessageEdit[];
+  isEdited?: boolean;
+}
+
+export interface MessageEdit {
+  oldContent: string;
+  newContent: string;
+  editedAt: number;
+  blockchainHash?: string; // Hash of the edit transaction
+}
+
+export interface ChatRoom {
+  id: string;
+  name: string;
+  type: 'public' | 'private' | 'company';
+  description?: string;
+  companyId?: string;
+  members: string[];
+  createdBy: string;
+  createdAt: number;
+  avatar?: string;
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  description?: string;
+  logo?: string;
+  members: string[];
+  rooms: string[];
+  createdAt: number;
 }
 
 export const formatAddress = (address: string): string => {
@@ -25,4 +59,12 @@ export const formatTimestamp = (timestamp: number): string => {
   if (days < 7) return `${days}d ago`;
   
   return date.toLocaleDateString();
+};
+
+export const generateRoomId = (): string => {
+  return `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
+
+export const generateCompanyId = (): string => {
+  return `company_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
