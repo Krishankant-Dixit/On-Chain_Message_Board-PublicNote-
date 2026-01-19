@@ -1,13 +1,16 @@
 # Company-Focused Social Messaging Application
 
-A mobile-first blockchain-powered messaging application built with React Native and Expo. Supports private and public chat rooms with immutable, tamper-proof messages stored on blockchain. Features include message editing with full history tracking, company-wide conversations, and dual authentication (email or blockchain wallet).
+A mobile-first blockchain-powered messaging application built with React Native and Expo. Supports private and public chat rooms with immutable, tamper-proof messages stored on blockchain. Features include message editing with full history tracking, company-wide conversations, dual authentication (email or blockchain wallet), and AI-powered features via Google Gemini API.
+
+**Built with:** React Native + Expo | Ethereum Smart Contracts (Remix IDE) | MetaMask Wallet | Gemini AI
 
 ## Features
 
-- 🔐 **Dual Authentication**: Login via email or blockchain wallet
+- 🔐 **Dual Authentication**: Login via email or blockchain wallet (MetaMask)
 - 💬 **Chat Rooms**: Create and join public, private, or company-specific rooms
-- ⛓️ **Blockchain Integration**: All messages are immutable and tamper-proof
+- ⛓️ **Blockchain Integration**: All messages are immutable and tamper-proof (deployed via Remix IDE)
 - ✏️ **Edit History**: Edit messages while preserving full history on blockchain (like WhatsApp)
+- 🤖 **AI-Powered Features**: Message safety analysis, smart suggestions, sentiment detection (Gemini API)
 - 🏢 **Company Support**: Dedicated spaces for company-wide communication
 - 👥 **Group Conversations**: Support for team and group discussions
 - 🔒 **High Security**: End-to-end encrypted private rooms with secure storage
@@ -17,12 +20,24 @@ A mobile-first blockchain-powered messaging application built with React Native 
 
 ## Tech Stack
 
+### Mobile Development
 - **React Native** - Cross-platform mobile framework
 - **Expo** - Development platform for React Native
 - **TypeScript** - Type-safe JavaScript
 - **React Navigation** - Native navigation library
+
+### Blockchain & Web3
 - **Ethers.js** - Ethereum library for blockchain interactions
-- **WalletConnect** - Wallet connection protocol
+- **MetaMask** - Wallet connection for signing transactions
+- **Remix IDE** - Browser-based smart contract development and deployment
+- **Ethereum Sepolia** - Testnet for development and testing
+
+### AI & Smart Features
+- **Google Gemini API** - AI-powered message analysis, suggestions, and sentiment detection
+
+### Data & Storage
+- **AsyncStorage** - Secure local storage for credentials
+- **Smart Contracts** - On-chain message immutability
 
 ## Prerequisites
 
@@ -95,6 +110,60 @@ npm start
 ├── App.tsx               # Root component
 ├── app.json              # Expo configuration
 └── package.json          # Dependencies
+```
+
+## Setup & Configuration
+
+### 1. Smart Contract Deployment with Remix IDE
+
+Deploy your smart contract without any local setup:
+
+1. Go to [Remix IDE](https://remix.ethereum.org)
+2. Create/paste your `MessageBoard.sol` contract
+3. Compile with Solidity 0.8.19+
+4. Connect MetaMask wallet
+5. Deploy to Ethereum Sepolia testnet
+6. Copy your contract address
+
+**See [REMIX_IDE_SETUP.md](REMIX_IDE_SETUP.md) for detailed instructions**
+
+### 2. MetaMask Wallet Setup
+
+1. Install [MetaMask](https://metamask.io) browser extension or mobile app
+2. Create or import your wallet
+3. Add Ethereum Sepolia testnet
+4. Get free test ETH from [faucet](https://sepolia-faucet.pk910.de/)
+
+**See [METAMASK_SETUP.md](METAMASK_SETUP.md) for detailed instructions**
+
+### 3. Gemini API Configuration
+
+1. Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Create `.env.local` file in project root:
+   ```bash
+   EXPO_PUBLIC_GEMINI_API_KEY=your_api_key_here
+   EXPO_PUBLIC_RPC_URL=https://sepolia.infura.io/v3/YOUR_KEY
+   ```
+3. API key is automatically loaded in the app
+
+**See [GEMINI_API_SETUP.md](GEMINI_API_SETUP.md) for detailed instructions**
+
+### 4. Installation & Running
+
+```bash
+# 1. Clone and install
+git clone https://github.com/Krishankant-Dixit/On-Chain_Message_Board-PublicNote-.git
+cd On-Chain_Message_Board-PublicNote-
+npm install
+
+# 2. Update configuration
+# Edit src/contracts/MessageBoard.ts with your deployed contract address
+# Update src/utils/constants.ts with your RPC URL and Gemini key
+
+# 3. Start development server
+npm start
+
+# 4. Scan QR code with Expo Go on your phone
 ```
 
 ## Smart Contract Integration

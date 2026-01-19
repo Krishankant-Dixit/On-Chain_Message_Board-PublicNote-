@@ -1,15 +1,19 @@
 // Typography system
+const fontSize = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+};
+
 export const typography = {
   // Font sizes
-  fontSize: {
-    xs: 12,
-    sm: 14,
-    md: 16,
-    lg: 18,
-    xl: 20,
-    xxl: 24,
-    xxxl: 32,
-  },
+  fontSize,
+  // Alias for backward compatibility
+  sizes: fontSize,
   
   // Font weights
   fontWeight: {

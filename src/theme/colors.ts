@@ -13,6 +13,7 @@ export const colors = {
   // Card and surface colors
   card: '#1F2937',
   cardHover: '#252D3D',
+  cardBackground: '#1F2937',
   
   // Text colors
   text: '#F9FAFB',

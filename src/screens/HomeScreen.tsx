@@ -7,13 +7,16 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { useWeb3 } from '../context/Web3Context';
+import { useWeb3, formatAddress } from '../context/Web3Context';
 import { Button, MessageCard } from '../components';
 import { theme } from '../theme';
-import { Message } from '../utils/helpers';
+import { Message } from '../contracts/MessageBoard';
+import { analyzeSentiment } from '../services/geminiService';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -21,33 +24,15 @@ interface HomeScreenProps {
   navigation: HomeScreenNavigationProp;
 }
 
+interface DisplayMessage extends Message {
+  sentiment?: 'positive' | 'neutral' | 'negative';
+}
+
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { isConnected, account, connectWallet, disconnectWallet } = useWeb3();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { isConnected, account, connectWallet, disconnectWallet, getMessages } = useWeb3();
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  // Demo messages for UI demonstration
-  const demoMessages: Message[] = [
-    {
-      id: 1,
-      content: 'Welcome to the On-Chain Message Board! This is a decentralized platform for sharing thoughts.',
-      sender: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-      timestamp: Date.now() / 1000 - 3600,
-    },
-    {
-      id: 2,
-      content: 'Building on blockchain is the future! Excited to be part of this community.',
-      sender: '0x1234567890abcdef1234567890abcdef12345678',
-      timestamp: Date.now() / 1000 - 7200,
-    },
-    {
-      id: 3,
-      content: 'Just deployed my first smart contract. This technology is amazing! 🚀',
-      sender: '0xabcdef1234567890abcdef1234567890abcdef12',
-      timestamp: Date.now() / 1000 - 86400,
-    },
-  ];
 
   useEffect(() => {
     if (isConnected) {
@@ -58,12 +43,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const loadMessages = async () => {
     setLoading(true);
     try {
-      // Simulate loading messages from blockchain
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMessages(demoMessages);
+      const fetchedMessages = await getMessages(20, 0);
+      const messagesWithSentiment = await Promise.all(
+        fetchedMessages.map(async (msg) => {
+          try {
+            const sentimentResult = await analyzeSentiment(msg.content);
+            return {
+              ...msg,
+              sentiment: sentimentResult.sentiment,
+            };
+          } catch (error) {
+            return msg;
+          }
+        })
+      );
+      setMessages(messagesWithSentiment);
     } catch (error) {
       console.error('Error loading messages:', error);
-      Alert.alert('Error', 'Failed to load messages');
+      Alert.alert('Error', 'Failed to load messages from blockchain');
     } finally {
       setLoading(false);
     }
@@ -78,33 +75,105 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const handleConnect = async () => {
     try {
       await connectWallet();
-      Alert.alert('Success', 'Wallet connected successfully!');
+      Alert.alert('Success', '✓ Wallet connected successfully!');
     } catch (error) {
-      Alert.alert('Error', 'Failed to connect wallet');
+      Alert.alert('Error', 'Failed to connect wallet. Check your RPC URL configuration.');
     }
+  };
+
+  const handleDisconnect = () => {
+    Alert.alert(
+      'Disconnect Wallet?',
+      'Are you sure you want to disconnect your wallet?',
+      [
+        { text: 'Cancel', onPress: () => {} },
+        {
+          text: 'Disconnect',
+          onPress: () => {
+            disconnectWallet();
+            Alert.alert('Disconnected', 'Wallet disconnected successfully.');
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
+
+  const openLink = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', `Cannot open URL: ${url}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to open link');
+    }
+  };
+
+  const handlePostMessage = () => {
+    if (!isConnected) {
+      Alert.alert('Wallet Required', 'Please connect your wallet first');
+      return;
+    }
+    navigation.navigate('PostMessage');
+  };
+
+  const renderMessage = ({ item }: { item: DisplayMessage }) => {
+    const getSentimentIcon = (sentiment?: string) => {
+      switch (sentiment) {
+        case 'positive':
+          return '😊';
+        case 'negative':
+          return '😔';
+        default:
+          return '😐';
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => {
+          Alert.alert(
+            'Message Details',
+            `From: ${item.sender}\nContent: ${item.content}\nEdited: ${item.isEdited ? 'Yes' : 'No'}`
+          );
+        }}
+      >
+        <MessageCard
+          message={{
+            ...item,
+            sender: formatAddress(item.sender),
+            sentimentIcon: getSentimentIcon(item.sentiment),
+          }}
+        />
+      </TouchableOpacity>
+    );
   };
 
   if (!isConnected) {
     return (
       <View style={styles.container}>
         <View style={styles.welcomeContainer}>
-          <Text style={styles.title}>On-Chain Message Board</Text>
+          <Text style={styles.title}>🔗 On-Chain Message Board</Text>
           <Text style={styles.subtitle}>
-            Connect your wallet to read and post messages on the blockchain
+            Blockchain-powered secure communication for your team
           </Text>
-          
+
           <View style={styles.featureContainer}>
             <View style={styles.feature}>
-              <Text style={styles.featureIcon}>🔗</Text>
+              <Text style={styles.featureIcon}>⛓️</Text>
               <Text style={styles.featureText}>Decentralized</Text>
             </View>
             <View style={styles.feature}>
-              <Text style={styles.featureIcon}>🔐</Text>
-              <Text style={styles.featureText}>Secure</Text>
+              <Text style={styles.featureIcon}>🔒</Text>
+              <Text style={styles.featureText}>Immutable</Text>
             </View>
             <View style={styles.feature}>
-              <Text style={styles.featureIcon}>💬</Text>
-              <Text style={styles.featureText}>On-Chain</Text>
+              <Text style={styles.featureIcon}>🤖</Text>
+              <Text style={styles.featureText}>AI-Powered</Text>
             </View>
           </View>
 
@@ -114,6 +183,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             size="large"
             style={styles.connectButton}
           />
+
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => openLink('https://remix.ethereum.org')}
+          >
+            <Text style={styles.linkText}>📝 Deploy Contract on Remix IDE</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => openLink('https://metamask.io')}
+          >
+            <Text style={styles.linkText}>🦊 Install MetaMask Wallet</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -123,42 +206,64 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>Message Board</Text>
+          <Text style={styles.headerTitle}>Messages</Text>
           <Text style={styles.headerSubtitle}>
-            {account?.slice(0, 6)}...{account?.slice(-4)}
+            Network: {account ? formatAddress(account) : 'Not connected'}
           </Text>
         </View>
-        <TouchableOpacity onPress={disconnectWallet} style={styles.disconnectButton}>
-          <Text style={styles.disconnectText}>Disconnect</Text>
-        </TouchableOpacity>
+        <Button
+          title="Post"
+          onPress={handlePostMessage}
+          size="small"
+          style={styles.postButton}
+        />
       </View>
 
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <MessageCard message={item} />}
-        contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
+      {loading && !refreshing ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={styles.loadingText}>Loading messages...</Text>
+        </View>
+      ) : messages.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.emptyText}>📭 No messages yet</Text>
+          <Button
+            title="Post First Message"
+            onPress={handlePostMessage}
+            size="medium"
+            style={styles.actionButton}
           />
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No messages yet</Text>
-            <Text style={styles.emptySubtext}>Be the first to post!</Text>
-          </View>
-        }
-      />
+        </View>
+      ) : (
+        <FlatList
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+        />
+      )}
 
       <View style={styles.footer}>
         <Button
-          title="Post Message"
-          onPress={() => navigation.navigate('PostMessage')}
-          size="large"
-          style={styles.postButton}
+          title="Refresh"
+          onPress={onRefresh}
+          variant="secondary"
+          size="small"
+          style={styles.footerButton}
+        />
+        <Button
+          title="Disconnect"
+          onPress={handleDisconnect}
+          variant="secondary"
+          size="small"
+          style={styles.footerButton}
         />
       </View>
     </View>
@@ -170,100 +275,113 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  welcomeContainer: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  headerTitle: {
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: '700',
+    color: theme.colors.text,
+  },
+  headerSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.xs,
+  },
+  postButton: {
+    paddingHorizontal: theme.spacing.md,
+  },
+  listContent: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+  },
+  centerContainer: {
     flex: 1,
-    padding: theme.spacing.xl,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+  },
+  loadingText: {
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.md,
+    fontSize: theme.typography.sizes.md,
+  },
+  emptyText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.sizes.lg,
+    marginBottom: theme.spacing.lg,
+  },
+  actionButton: {
+    marginTop: theme.spacing.md,
+  },
+  welcomeContainer: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.xl,
+    justifyContent: 'center',
   },
   title: {
-    fontSize: theme.typography.fontSize.xxxl,
-    fontWeight: theme.typography.fontWeight.bold,
+    fontSize: theme.typography.sizes.xl,
+    fontWeight: '700',
     color: theme.colors.text,
-    textAlign: 'center',
     marginBottom: theme.spacing.md,
   },
   subtitle: {
-    fontSize: theme.typography.fontSize.md,
+    fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xl,
-    lineHeight: theme.typography.lineHeight.relaxed * theme.typography.fontSize.md,
+    marginBottom: theme.spacing.lg,
+    lineHeight: 22,
   },
   featureContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: theme.spacing.xxl,
+    marginVertical: theme.spacing.xl,
+    marginBottom: theme.spacing.xl,
   },
   feature: {
     alignItems: 'center',
   },
   featureIcon: {
-    fontSize: 40,
-    marginBottom: theme.spacing.sm,
+    fontSize: 32,
+    marginBottom: theme.spacing.xs,
   },
   featureText: {
     color: theme.colors.textSecondary,
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: '600',
   },
   connectButton: {
-    width: '100%',
+    marginBottom: theme.spacing.md,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing.md,
-    paddingTop: theme.spacing.xxl,
-    backgroundColor: theme.colors.backgroundSecondary,
+  linkButton: {
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    marginVertical: theme.spacing.xs,
+    backgroundColor: theme.colors.cardBackground,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
-  headerTitle: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text,
-  },
-  headerSubtitle: {
-    fontSize: theme.typography.fontSize.sm,
+  linkText: {
     color: theme.colors.primary,
-    marginTop: theme.spacing.xs,
-  },
-  disconnectButton: {
-    padding: theme.spacing.sm,
-  },
-  disconnectText: {
-    color: theme.colors.error,
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-  },
-  listContent: {
-    padding: theme.spacing.md,
-    paddingBottom: theme.spacing.xxl * 2,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.xxl * 2,
-  },
-  emptyText: {
-    fontSize: theme.typography.fontSize.lg,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.typography.fontWeight.semibold,
-  },
-  emptySubtext: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.textTertiary,
-    marginTop: theme.spacing.sm,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    flexDirection: 'row',
     padding: theme.spacing.md,
-    backgroundColor: theme.colors.backgroundSecondary,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    gap: theme.spacing.md,
   },
-  postButton: {
-    width: '100%',
+  footerButton: {
+    flex: 1,
   },
 });
