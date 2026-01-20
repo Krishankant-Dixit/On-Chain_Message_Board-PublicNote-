@@ -9,6 +9,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Input, Card } from '../components';
@@ -24,6 +25,7 @@ interface CreateRoomScreenProps {
 
 export const CreateRoomScreen: React.FC<CreateRoomScreenProps> = ({ navigation }) => {
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
   const [roomName, setRoomName] = useState('');
   const [description, setDescription] = useState('');
   const [roomType, setRoomType] = useState<'public' | 'private' | 'company'>('public');
@@ -74,7 +76,7 @@ export const CreateRoomScreen: React.FC<CreateRoomScreenProps> = ({ navigation }
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + theme.spacing.lg }]}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>

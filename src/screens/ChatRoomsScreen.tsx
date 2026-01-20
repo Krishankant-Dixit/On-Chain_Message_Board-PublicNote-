@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Card } from '../components';
@@ -23,6 +24,7 @@ interface ChatRoomsScreenProps {
 
 export const ChatRoomsScreen: React.FC<ChatRoomsScreenProps> = ({ navigation }) => {
   const { user, logout } = useAuth();
+  const insets = useSafeAreaInsets();
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -196,7 +198,7 @@ export const ChatRoomsScreen: React.FC<ChatRoomsScreenProps> = ({ navigation }) 
         }
       />
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: insets.bottom || theme.spacing.md }]}>
         <Button
           title="Create Room"
           onPress={() => navigation.navigate('CreateRoom')}
@@ -330,7 +332,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
     backgroundColor: theme.colors.backgroundSecondary,
   },
   createButton: {

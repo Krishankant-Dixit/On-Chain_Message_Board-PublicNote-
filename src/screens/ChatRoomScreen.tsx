@@ -11,6 +11,7 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -31,6 +32,7 @@ interface ChatRoomScreenProps {
 export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, route }) => {
   const { roomId, roomName } = route.params;
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -264,7 +266,7 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       </View>
 
       {/* Input Container */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { paddingBottom: insets.bottom || theme.spacing.sm }]}>
         {editingMessageId && (
           <View style={styles.editingBanner}>
             <View style={styles.editingInfo}>
@@ -423,7 +425,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundSecondary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderDark,
-    paddingBottom: Platform.OS === 'ios' ? theme.spacing.lg : theme.spacing.sm,
   },
   editingBanner: {
     flexDirection: 'row',
