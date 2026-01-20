@@ -102,7 +102,15 @@ export const MESSAGE_BOARD_ADDRESS =
 // Network ID
 export const MESSAGE_BOARD_NETWORK = 11155111; // Sepolia Testnet
 
-// Message type definition
+// Message Edit history interface
+export interface MessageEdit {
+  oldContent: string;
+  newContent: string;
+  editedAt: number;
+  blockchainHash?: string;
+}
+
+// Message type definition with all optional fields
 export interface Message {
   id: number;
   sender: string;
@@ -112,5 +120,8 @@ export interface Message {
   editCount: number;
   sentiment?: 'positive' | 'neutral' | 'negative';
   sentimentIcon?: string;
+  roomId?: string;
+  isPrivate?: boolean;
+  editHistory?: MessageEdit[];
 }
 

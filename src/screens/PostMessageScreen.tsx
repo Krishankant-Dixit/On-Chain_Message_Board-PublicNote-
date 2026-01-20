@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -193,10 +194,19 @@ export const PostMessageScreen: React.FC<PostMessageScreenProps> = ({
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Post Message</Text>
-          <Text style={styles.subtitle}>Share your thoughts on-chain</Text>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <View style={styles.headerContent}>
+            <Text style={styles.title}>New Message</Text>
+            <Text style={styles.subtitle}>Post to the blockchain</Text>
+          </View>
         </View>
 
         <Card style={styles.infoCard}>
@@ -284,147 +294,183 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   scrollContent: {
-    padding: theme.spacing.md,
-    paddingTop: theme.spacing.xl,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxl + 10,
   },
   header: {
-    marginBottom: theme.spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.backgroundTertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: theme.spacing.md,
+  },
+  backIcon: {
+    fontSize: 24,
+    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
+  headerContent: {
+    flex: 1,
   },
   title: {
-    fontSize: theme.typography.sizes.xl,
-    fontWeight: '700',
+    fontSize: theme.typography.fontSize.xxl,
+    fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   subtitle: {
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
+    fontWeight: theme.typography.fontWeight.medium,
   },
   infoCard: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.backgroundTertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.sm,
+    alignItems: 'center',
+    paddingVertical: theme.spacing.xs,
   },
   infoLabel: {
-    fontSize: theme.typography.sizes.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    fontWeight: '600',
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   infoValue: {
-    fontSize: theme.typography.sizes.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.primary,
-    fontWeight: '600',
+    fontWeight: theme.typography.fontWeight.bold,
   },
   inputContainer: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
   },
   inputWrapper: {
-    marginBottom: theme.spacing.xs,
+    marginBottom: 0,
   },
   textArea: {
-    minHeight: 120,
+    minHeight: 140,
     textAlignVertical: 'top',
     paddingTop: theme.spacing.md,
+    fontSize: theme.typography.fontSize.base,
+    lineHeight: theme.typography.fontSize.base * 1.5,
   },
   charCountContainer: {
-    alignItems: 'flex-end',
-    marginTop: theme.spacing.xs,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.xs,
   },
   charCount: {
-    fontSize: theme.typography.sizes.xs,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.textSecondary,
+    fontWeight: theme.typography.fontWeight.medium,
   },
   charCountError: {
     color: theme.colors.error,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   safetyCard: {
-    backgroundColor: theme.colors.cardBackground,
+    backgroundColor: theme.colors.backgroundTertiary,
     padding: theme.spacing.md,
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    marginBottom: theme.spacing.md,
-  },
-  safetyText: {
-    fontSize: theme.typography.sizes.sm,
-    fontWeight: '600',
-  },
-  topicsContainer: {
+    borderRadius: theme.borderRadius.lg,
+    borderLeftWidth: 4,
     marginBottom: theme.spacing.lg,
   },
+  safetyText: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    lineHeight: theme.typography.fontSize.sm * 1.5,
+  },
+  topicsContainer: {
+    marginBottom: theme.spacing.xl,
+  },
   topicsLabel: {
-    fontSize: theme.typography.sizes.sm,
-    fontWeight: '600',
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
   },
   topicsList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.xs,
+    gap: theme.spacing.sm,
   },
   topicTag: {
-    backgroundColor: theme.colors.primary + '20',
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: 16,
+    backgroundColor: 'rgba(124, 58, 237, 0.15)',
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.full,
     borderWidth: 1,
-    borderColor: theme.colors.primary,
+    borderColor: 'rgba(124, 58, 237, 0.3)',
   },
   topicText: {
     color: theme.colors.primary,
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: '600',
+    fontSize: theme.typography.fontSize.xs,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   suggestionsCard: {
-    marginBottom: theme.spacing.lg,
-    backgroundColor: theme.colors.cardBackground,
+    marginBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.backgroundTertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   suggestionsTitle: {
-    fontSize: theme.typography.sizes.md,
-    fontWeight: '600',
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   suggestionItem: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.borderDark,
+    marginBottom: theme.spacing.xs,
   },
   suggestionText: {
-    fontSize: theme.typography.sizes.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    fontStyle: 'italic',
+    lineHeight: theme.typography.fontSize.sm * 1.5,
   },
   tipsCard: {
-    backgroundColor: theme.colors.cardBackground,
-    padding: theme.spacing.md,
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: theme.colors.primary,
-    marginBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.backgroundTertiary,
+    padding: theme.spacing.lg,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    marginBottom: theme.spacing.xl,
   },
   tipsTitle: {
-    fontSize: theme.typography.sizes.md,
-    fontWeight: '600',
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   tipsText: {
-    fontSize: theme.typography.sizes.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: theme.typography.fontSize.sm * 1.6,
   },
   buttonContainer: {
     flexDirection: 'row',
     gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   cancelButton: {
     flex: 1,
   },
   postButton: {
-    flex: 1,
+    flex: 2,
   },
 });

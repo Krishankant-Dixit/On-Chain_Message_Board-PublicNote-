@@ -6,18 +6,21 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  View,
 } from 'react-native';
 import { theme } from '../theme';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
+  icon?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  fullWidth?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -27,14 +30,17 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   disabled = false,
   loading = false,
+  icon,
   style,
   textStyle,
+  fullWidth = false,
 }) => {
   const buttonStyle = [
     styles.button,
     styles[variant],
     styles[size],
     disabled && styles.disabled,
+    fullWidth && styles.fullWidth,
     style,
   ];
 
@@ -50,12 +56,18 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator color={theme.colors.text} />
+        <ActivityIndicator 
+          color={variant === 'outline' || variant === 'ghost' ? theme.colors.primary : theme.colors.textOnPrimary} 
+          size="small"
+        />
       ) : (
-        <Text style={textStyles}>{title}</Text>
+        <View style={styles.content}>
+          {icon && <Text style={[styles.icon, textStyles]}>{icon}</Text>}
+          <Text style={textStyles}>{title}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -63,10 +75,29 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+  },
+  
+  icon: {
+    marginRight: theme.spacing.xs,
+  },
+  
+  fullWidth: {
+    width: '100%',
   },
   
   // Variants
@@ -74,40 +105,58 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   secondary: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: theme.colors.backgroundTertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: theme.colors.primary,
   },
+  ghost: {
+    backgroundColor: 'transparent',
+  },
+  gradient: {
+    backgroundColor: theme.colors.primary,
+  },
   
   // Sizes
   small: {
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
+    minHeight: 36,
   },
   medium: {
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.lg,
+    minHeight: 44,
   },
   large: {
-    paddingVertical: theme.spacing.lg,
+    paddingVertical: 16,
     paddingHorizontal: theme.spacing.xl,
+    minHeight: 56,
   },
   
   // Text styles
   text: {
     fontWeight: theme.typography.fontWeight.semibold,
+    letterSpacing: theme.typography.letterSpacing.wide,
   },
   primaryText: {
-    color: theme.colors.text,
+    color: theme.colors.textOnPrimary,
   },
   secondaryText: {
-    color: theme.colors.textSecondary,
+    color: theme.colors.text,
   },
   outlineText: {
     color: theme.colors.primary,
+  },
+  ghostText: {
+    color: theme.colors.textSecondary,
+  },
+  gradientText: {
+    color: theme.colors.textOnPrimary,
   },
   
   // Size text styles
@@ -115,13 +164,13 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
   },
   mediumText: {
-    fontSize: theme.typography.fontSize.md,
+    fontSize: theme.typography.fontSize.base,
   },
   largeText: {
     fontSize: theme.typography.fontSize.lg,
   },
   
   disabled: {
-    opacity: 0.5,
+    opacity: 0.4,
   },
 });

@@ -9,14 +9,16 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Card } from '../components';
+import { MessageCard } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
-import { Message, formatTimestamp, formatAddress } from '../utils/helpers';
+import { Message } from '../contracts/MessageBoard';
+import { MessageEdit, formatTimestamp, formatAddress } from '../utils/helpers';
 
 type ChatRoomScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatRoom'>;
 type ChatRoomScreenRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
@@ -43,6 +45,8 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       timestamp: Date.now() / 1000 - 3600,
       roomId,
       isPrivate: false,
+      isEdited: false,
+      editCount: 0,
     },
     {
       id: 2,
@@ -51,6 +55,8 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       timestamp: Date.now() / 1000 - 1800,
       roomId,
       isPrivate: false,
+      isEdited: false,
+      editCount: 0,
     },
     {
       id: 3,
@@ -60,6 +66,7 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       roomId,
       isPrivate: false,
       isEdited: true,
+      editCount: 1,
       editHistory: [
         {
           oldContent: 'All messages are stored on blockchain',
@@ -72,7 +79,9 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
   ];
 
   useEffect(() => {
-    navigation.setOptions({ title: roomName });
+    navigation.setOptions({ 
+      headerShown: false,
+    });
     loadMessages();
   }, [roomId]);
 
@@ -99,6 +108,8 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       timestamp: Date.now() / 1000,
       roomId,
       isPrivate: false,
+      isEdited: false,
+      editCount: 0,
     };
 
     setMessages([...messages, newMessage]);
@@ -137,6 +148,7 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
           ...msg,
           content: inputText,
           isEdited: true,
+          editCount: (msg.editCount || 0) + 1,
           editHistory,
         };
       }
@@ -193,26 +205,11 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
           }
         }}
       >
-        <View style={[styles.messageContainer, isMine && styles.myMessageContainer]}>
-          <Card style={[styles.messageCard, isMine && styles.myMessageCard]}>
-            {!isMine && (
-              <Text style={styles.senderText}>{formatAddress(item.sender)}</Text>
-            )}
-            <Text style={[styles.messageText, isMine && styles.myMessageText]}>
-              {item.content}
-            </Text>
-            <View style={styles.messageFooter}>
-              <Text style={[styles.timestampText, isMine && styles.myTimestampText]}>
-                {formatTimestamp(item.timestamp)}
-              </Text>
-              {item.isEdited && (
-                <Text style={[styles.editedText, isMine && styles.myEditedText]}>
-                  • Edited
-                </Text>
-              )}
-            </View>
-          </Card>
-        </View>
+        <MessageCard
+          message={item}
+          variant={isMine ? 'sent' : 'received'}
+          showSender={!isMine}
+        />
       </TouchableOpacity>
     );
   };
@@ -221,53 +218,99 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={90}
+      keyboardVerticalOffset={0}
     >
+      <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
+      
+      {/* Custom Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+          >
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          
+          <View style={styles.roomInfo}>
+            <View style={styles.roomIconContainer}>
+              <Text style={styles.roomIcon}>💬</Text>
+            </View>
+            <View>
+              <Text style={styles.roomTitle}>{roomName}</Text>
+              <View style={styles.statusBadge}>
+                <View style={styles.onlineDot} />
+                <Text style={styles.statusText}>Active</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        
+        <TouchableOpacity style={styles.menuButton}>
+          <Text style={styles.menuIcon}>⋮</Text>
         </TouchableOpacity>
-        <Text style={styles.roomTitle}>{roomName}</Text>
-        <View style={styles.placeholder} />
       </View>
 
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderMessage}
-        contentContainerStyle={styles.messagesList}
-        inverted={false}
-      />
+      {/* Messages List */}
+      <View style={styles.chatBackground}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderMessage}
+          contentContainerStyle={styles.messagesList}
+          inverted={false}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
 
+      {/* Input Container */}
       <View style={styles.inputContainer}>
         {editingMessageId && (
           <View style={styles.editingBanner}>
-            <Text style={styles.editingText}>Editing message...</Text>
-            <TouchableOpacity onPress={() => {
-              setEditingMessageId(null);
-              setInputText('');
-            }}>
-              <Text style={styles.cancelEditText}>Cancel</Text>
+            <View style={styles.editingInfo}>
+              <Text style={styles.editingIcon}>✏️</Text>
+              <Text style={styles.editingText}>Editing message</Text>
+            </View>
+            <TouchableOpacity 
+              onPress={() => {
+                setEditingMessageId(null);
+                setInputText('');
+              }}
+              style={styles.cancelButton}
+            >
+              <Text style={styles.cancelText}>✕</Text>
             </TouchableOpacity>
           </View>
         )}
+        
         <View style={styles.inputRow}>
-          <TextInput
-            style={styles.input}
-            placeholder="Type a message..."
-            placeholderTextColor={theme.colors.textTertiary}
-            value={inputText}
-            onChangeText={setInputText}
-            multiline
-            maxLength={500}
-          />
+          <TouchableOpacity style={styles.attachButton}>
+            <Text style={styles.attachIcon}>+</Text>
+          </TouchableOpacity>
+          
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Type a message..."
+              placeholderTextColor={theme.colors.inputPlaceholder}
+              value={inputText}
+              onChangeText={setInputText}
+              multiline
+              maxLength={500}
+            />
+          </View>
+          
           <TouchableOpacity
-            style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
+            style={[
+              styles.sendButton,
+              !inputText.trim() && styles.sendButtonDisabled
+            ]}
             onPress={editingMessageId ? handleSaveEdit : handleSend}
             disabled={!inputText.trim()}
+            activeOpacity={0.8}
           >
             <Text style={styles.sendButtonText}>
-              {editingMessageId ? '✓' : '→'}
+              {editingMessageId ? '✓' : '➤'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -281,135 +324,203 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  
+  // Custom Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
     paddingTop: theme.spacing.xxl,
+    paddingBottom: theme.spacing.md,
     backgroundColor: theme.colors.backgroundSecondary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderDark,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   backButton: {
-    padding: theme.spacing.sm,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.backgroundTertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: theme.spacing.sm,
   },
-  backText: {
-    color: theme.colors.primary,
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
+  backIcon: {
+    fontSize: 20,
+    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
+  roomInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  roomIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: theme.spacing.sm,
+  },
+  roomIcon: {
+    fontSize: 20,
   },
   roomTitle: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text,
+    marginBottom: 2,
   },
-  placeholder: {
-    width: 60,
-  },
-  messagesList: {
-    padding: theme.spacing.md,
-    paddingBottom: theme.spacing.lg,
-  },
-  messageContainer: {
-    marginBottom: theme.spacing.md,
-    alignItems: 'flex-start',
-  },
-  myMessageContainer: {
-    alignItems: 'flex-end',
-  },
-  messageCard: {
-    maxWidth: '80%',
-    backgroundColor: theme.colors.backgroundSecondary,
-  },
-  myMessageCard: {
-    backgroundColor: theme.colors.primary,
-  },
-  senderText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.primary,
-    fontWeight: theme.typography.fontWeight.semibold,
-    marginBottom: theme.spacing.xs,
-  },
-  messageText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text,
-    lineHeight: theme.typography.lineHeight.relaxed * theme.typography.fontSize.md,
-    marginBottom: theme.spacing.xs,
-  },
-  myMessageText: {
-    color: '#FFFFFF',
-  },
-  messageFooter: {
+  statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  timestampText: {
+  onlineDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: theme.colors.online,
+    marginRight: theme.spacing.xs,
+  },
+  statusText: {
     fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textTertiary,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.fontWeight.medium,
   },
-  myTimestampText: {
-    color: 'rgba(255, 255, 255, 0.7)',
+  menuButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.backgroundTertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  editedText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textTertiary,
-    marginLeft: theme.spacing.xs,
-    fontStyle: 'italic',
+  menuIcon: {
+    fontSize: 24,
+    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeight.bold,
   },
-  myEditedText: {
-    color: 'rgba(255, 255, 255, 0.7)',
+  
+  // Chat Background
+  chatBackground: {
+    flex: 1,
+    backgroundColor: theme.colors.chatBackground,
   },
+  messagesList: {
+    paddingVertical: theme.spacing.md,
+  },
+  
+  // Input Container
   inputContainer: {
     backgroundColor: theme.colors.backgroundSecondary,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.backgroundTertiary,
+    borderTopColor: theme.colors.borderDark,
+    paddingBottom: Platform.OS === 'ios' ? theme.spacing.lg : theme.spacing.sm,
   },
   editingBanner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.backgroundTertiary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderDark,
+  },
+  editingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+  },
+  editingIcon: {
+    fontSize: theme.typography.fontSize.md,
   },
   editingText: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.primary,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  cancelEditText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.error,
     fontWeight: theme.typography.fontWeight.semibold,
+  },
+  cancelButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: theme.colors.backgroundElevated,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelText: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.fontWeight.bold,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
     gap: theme.spacing.sm,
   },
-  input: {
+  attachButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.backgroundTertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+  },
+  attachIcon: {
+    fontSize: 24,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
+  inputWrapper: {
     flex: 1,
     backgroundColor: theme.colors.backgroundTertiary,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text,
+    borderRadius: theme.borderRadius.xl,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    minHeight: 40,
     maxHeight: 100,
+    justifyContent: 'center',
+  },
+  input: {
+    fontSize: theme.typography.fontSize.base,
+    color: theme.colors.text,
+    fontWeight: theme.typography.fontWeight.regular,
+    lineHeight: theme.typography.fontSize.base * theme.typography.lineHeight.normal,
+    paddingVertical: 0,
   },
   sendButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: theme.colors.primary,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+    shadowColor: theme.colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sendButtonDisabled: {
     backgroundColor: theme.colors.backgroundTertiary,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   sendButtonText: {
-    fontSize: 20,
-    color: '#FFFFFF',
+    fontSize: 18,
+    color: theme.colors.textOnPrimary,
     fontWeight: theme.typography.fontWeight.bold,
   },
 });

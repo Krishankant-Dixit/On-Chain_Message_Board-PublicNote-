@@ -4,6 +4,7 @@ export interface Message {
   content: string;
   sender: string;
   timestamp: number;
+  editCount: number;
   roomId?: string;
   isPrivate?: boolean;
   editHistory?: MessageEdit[];
