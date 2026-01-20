@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
   },
   content: {
     color: theme.colors.text,
-    fontSize: theme.typography.fontSize.base,
-    lineHeight: theme.typography.fontSize.base * theme.typography.lineHeight.relaxed,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 15,
+    lineHeight: 24,
+    fontWeight: '400',
   },
   sentContent: {
     color: theme.colors.textOnPrimary,

@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     paddingHorizontal: theme.spacing.lg,
     color: theme.colors.text,
-    fontSize: theme.typography.fontSize.base,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 15,
+    fontWeight: '400',
     minHeight: 52,
   },
   default: {

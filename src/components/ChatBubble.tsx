@@ -214,9 +214,9 @@ const styles = StyleSheet.create({
 
   // Message text
   messageText: {
-    fontSize: theme.typography.fontSize.base,
-    lineHeight: theme.typography.fontSize.base * 1.4,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: '400',
   },
   sentMessageText: {
     color: '#FFFFFF',
@@ -233,16 +233,16 @@ const styles = StyleSheet.create({
     gap: theme.spacing.xs / 2,
   },
   timestamp: {
-    fontSize: theme.typography.fontSize.xs,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 11,
+    fontWeight: '400',
     color: theme.colors.textSecondary,
   },
   sentTimestamp: {
     color: 'rgba(255, 255, 255, 0.7)',
   },
   editedBadge: {
-    fontSize: theme.typography.fontSize.xs,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 11,
+    fontWeight: '400',
     color: theme.colors.textSecondary,
   },
   sentEditedBadge: {

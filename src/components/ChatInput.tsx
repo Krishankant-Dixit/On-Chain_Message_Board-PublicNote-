@@ -247,8 +247,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: theme.colors.text,
-    fontSize: theme.typography.fontSize.base,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: 15,
+    fontWeight: '400',
     maxHeight: 100,
     paddingVertical: theme.spacing.sm,
   },
@@ -284,9 +284,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   counter: {
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: 11,
     color: theme.colors.textSecondary,
-    fontWeight: theme.typography.fontWeight.regular,
+    fontWeight: '400',
   },
   counterWarning: {
     color: theme.colors.warning,

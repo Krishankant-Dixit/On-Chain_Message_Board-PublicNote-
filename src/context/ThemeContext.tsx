@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme, type Theme as MaterialTheme } from '../theme/theme';
+import { theme } from '../theme';
 
 /**
  * Theme Context for managing light/dark theme
@@ -13,6 +14,9 @@ interface ThemeContextType {
   toggleTheme: () => Promise<void>;
   setTheme: (themeName: 'light' | 'dark') => Promise<void>;
   isLoading: boolean;
+  typography: typeof theme.typography;
+  spacing: typeof theme.spacing;
+  borderRadius: typeof theme.borderRadius;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -115,6 +119,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     toggleTheme,
     setTheme,
     isLoading,
+    typography: theme.typography,
+    spacing: theme.spacing,
+    borderRadius: theme.borderRadius,
   };
 
   return (

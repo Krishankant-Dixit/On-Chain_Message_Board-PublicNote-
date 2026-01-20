@@ -461,10 +461,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: 15,
     color: theme.colors.text,
-    fontWeight: theme.typography.fontWeight.regular,
-    lineHeight: theme.typography.fontSize.base * theme.typography.lineHeight.normal,
+    fontWeight: '400',
+    lineHeight: 22,
     paddingVertical: 0,
   },
   sendButton: {

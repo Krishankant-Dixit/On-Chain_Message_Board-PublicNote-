@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
   PostMessageScreen, 
   LoginScreen, 
@@ -36,6 +37,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 // Bottom Tabs Navigator
 const MainTabs: React.FC = () => {
   const { theme: materialTheme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -45,9 +47,9 @@ const MainTabs: React.FC = () => {
           backgroundColor: materialTheme.colors.surface,
           borderTopColor: materialTheme.colors.border,
           borderTopWidth: 1,
-          paddingBottom: 8,
+          paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 8,
-          height: 60,
+          height: 60 + insets.bottom,
         },
         tabBarActiveTintColor: materialTheme.colors.primary,
         tabBarInactiveTintColor: materialTheme.colors.textSecondary,
@@ -114,12 +116,30 @@ export const AppNavigator: React.FC = () => {
       theme={{
         dark: true,
         colors: {
-          primary: materialTheme.colors.primary,
+          primary: materialTheme.colors.primary || '#6A7FE1',
           background: materialTheme.colors.background,
-          card: materialTheme.colors.card,
-          text: materialTheme.colors.text,
+          card: materialTheme.colors.cardBackground || materialTheme.colors.surface,
+          text: materialTheme.colors.textPrimary,
           border: materialTheme.colors.border,
           notification: materialTheme.colors.accent,
+        },
+        fonts: {
+          regular: {
+            fontFamily: 'System',
+            fontWeight: '400',
+          },
+          medium: {
+            fontFamily: 'System',
+            fontWeight: '500',
+          },
+          bold: {
+            fontFamily: 'System',
+            fontWeight: '700',
+          },
+          heavy: {
+            fontFamily: 'System',
+            fontWeight: '900',
+          },
         },
       }}
     >

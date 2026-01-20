@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CompositeNavigationProp } from '@react-navigation/native';
@@ -36,6 +37,7 @@ interface DisplayMessage extends Message {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { isConnected, account, connectWallet, disconnectWallet, getMessages } = useWeb3();
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -307,7 +309,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       )}
 
       {isConnected && (
-        <View style={styles.fab}>
+        <View
+          style={[
+            styles.fab,
+            { bottom: theme.spacing.xl + (insets.bottom || theme.spacing.md) },
+          ]}
+        >
           <TouchableOpacity 
             style={styles.fabButton}
             onPress={handlePostMessage}
