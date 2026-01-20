@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: theme.spacing.sm,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.xl,
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.xs,
@@ -246,14 +246,14 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: theme.colors.textPrimary,
+    color: theme.colors.text,
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.regular,
     maxHeight: 100,
     paddingVertical: theme.spacing.sm,
   },
   inputFocused: {
-    color: theme.colors.textPrimary,
+    color: theme.colors.text,
   },
   sendButtonContainer: {
     justifyContent: 'center',

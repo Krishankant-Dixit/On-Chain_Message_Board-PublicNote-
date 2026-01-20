@@ -10,7 +10,9 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Input, Card } from '../components';
 import { theme } from '../theme';
@@ -22,9 +24,9 @@ import {
   extractTopics,
 } from '../services/geminiService';
 
-type PostMessageScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'PostMessage'
+type PostMessageScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<any, 'Post'>,
+  NativeStackNavigationProp<RootStackParamList>
 >;
 
 interface PostMessageScreenProps {

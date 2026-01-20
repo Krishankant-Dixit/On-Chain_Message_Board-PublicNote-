@@ -11,7 +11,9 @@ import {
   ActivityIndicator,
   StatusBar,
 } from 'react-native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useWeb3, formatAddress } from '../context/Web3Context';
 import { Button, MessageCard } from '../components';
@@ -19,7 +21,10 @@ import { theme } from '../theme';
 import { Message } from '../contracts/MessageBoard';
 import { analyzeSentiment } from '../services/geminiService';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
+type HomeScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<any, 'Chats'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 interface HomeScreenProps {
   navigation: HomeScreenNavigationProp;
@@ -118,7 +123,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       Alert.alert('Wallet Required', 'Please connect your wallet first');
       return;
     }
-    navigation.navigate('PostMessage');
+    navigation.navigate('MainTabs' as any, { screen: 'Post' });
   };
 
   const renderMessage = ({ item }: { item: DisplayMessage }) => {

@@ -9,14 +9,19 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Card, ProfileAvatar } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { ChatRoom } from '../utils/helpers';
 
-type ChatRoomsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatRooms'>;
+type ChatRoomsScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<any, 'Chats'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 interface ChatRoomsScreenProps {
   navigation: ChatRoomsScreenNavigationProp;
@@ -188,7 +193,7 @@ export const ChatRoomsScreen: React.FC<ChatRoomsScreenProps> = ({ navigation }) 
       <View style={[styles.footer, { paddingBottom: insets.bottom || theme.spacing.md }]}>
         <Button
           title="Create Room"
-          onPress={() => navigation.navigate('CreateRoom')}
+          onPress={() => Alert.alert('Feature', 'Create room feature coming soon!')}
           size="large"
           style={styles.createButton}
         />

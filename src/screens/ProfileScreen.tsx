@@ -162,7 +162,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
               </Text>
             </View>
           </View>
-ouchableOpacity onPress={handleCopyAddress} style={styles.addressContainer}>
+
+          <View style={styles.infoRow}>
+            <Text style={[styles.infoLabel, { color: materialTheme.colors.textSecondary }]}>
+              Address
+            </Text>
+            <TouchableOpacity onPress={handleCopyAddress} style={styles.addressContainer}>
               <Text style={[styles.infoValue, { color: materialTheme.colors.textPrimary }]} numberOfLines={1}>
                 {account.slice(0, 10)}...{account.slice(-8)}
               </Text>
@@ -180,14 +185,7 @@ ouchableOpacity onPress={handleCopyAddress} style={styles.addressContainer}>
             <Text style={[styles.copyButtonText, { color: materialTheme.colors.primary }]}>
               Copy Full Address
             </Text>
-          </TouchableOpacitystyle={styles.infoRow}>
-            <Text style={[styles.infoLabel, { color: materialTheme.colors.textSecondary }]}>
-              Address
-            </Text>
-            <Text style={[styles.infoValue, { color: materialTheme.colors.textPrimary }]} numberOfLines={1}>
-              {account.slice(0, 10)}...{account.slice(-8)}
-            </Text>
-          </View>
+          </TouchableOpacity>
         </Card>
       )}
 
@@ -285,6 +283,7 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.medium,
+  },
   addressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -308,9 +307,6 @@ const styles = StyleSheet.create({
   copyButtonText: {
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.semibold,
-  },
-    flex: 1,
-    textAlign: 'right',
   },
   divider: {
     height: 1,

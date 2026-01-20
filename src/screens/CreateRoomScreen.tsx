@@ -11,13 +11,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
 import { Button, Input, Card } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { generateRoomId, ChatRoom } from '../utils/helpers';
 
-type CreateRoomScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateRoom'>;
+type CreateRoomScreenNavigationProp = NativeStackNavigationProp<any>;
 
 interface CreateRoomScreenProps {
   navigation: CreateRoomScreenNavigationProp;

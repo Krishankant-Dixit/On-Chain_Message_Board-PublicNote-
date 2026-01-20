@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   roomTitle: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.textPrimary,
+    color: theme.colors.text,
     marginBottom: 2,
   },
   statusBadge: {
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.backgroundTertiary,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
   },

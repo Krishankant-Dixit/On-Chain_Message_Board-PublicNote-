@@ -116,8 +116,8 @@ export const AppNavigator: React.FC = () => {
         colors: {
           primary: materialTheme.colors.primary,
           background: materialTheme.colors.background,
-          card: materialTheme.colors.surface,
-          text: materialTheme.colors.textPrimary,
+          card: materialTheme.colors.card,
+          text: materialTheme.colors.text,
           border: materialTheme.colors.border,
           notification: materialTheme.colors.accent,
         },
