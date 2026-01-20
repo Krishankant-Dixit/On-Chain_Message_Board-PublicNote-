@@ -9,9 +9,10 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Button, Input, Card } from '../components';
+import { Button, Input, Card, BackButton } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { useWeb3 } from '../context/Web3Context';
@@ -23,6 +24,7 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const { loginWithEmail, loginWithWallet } = useAuth();
   const { connectWallet, account } = useWeb3();
   const [loginMethod, setLoginMethod] = useState<'email' | 'wallet' | null>(null);
@@ -61,28 +63,35 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   if (!loginMethod) {
     return (
-      <View style={styles.container}>
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.title}>Company Message Board</Text>
-          <Text style={styles.subtitle}>
-            Secure, blockchain-powered communication for your team
-          </Text>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <ScrollView
+          contentContainerStyle={styles.welcomeScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.contentWrapper}>
+            <Text style={styles.title}>Company Message Board</Text>
+            <Text style={styles.subtitle}>
+              Secure, blockchain-powered communication for your team
+            </Text>
 
-          <View style={styles.featureContainer}>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>🔒</Text>
-              <Text style={styles.featureText}>Encrypted</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>🏢</Text>
-              <Text style={styles.featureText}>Company-Wide</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>⛓️</Text>
-              <Text style={styles.featureText}>Blockchain</Text>
+            <View style={styles.featureContainer}>
+              <View style={styles.feature}>
+                <Text style={styles.featureIcon}>🔒</Text>
+                <Text style={styles.featureText}>Encrypted</Text>
+              </View>
+              <View style={styles.feature}>
+                <Text style={styles.featureIcon}>🏢</Text>
+                <Text style={styles.featureText}>Company-Wide</Text>
+              </View>
+              <View style={styles.feature}>
+                <Text style={styles.featureIcon}>⛓️</Text>
+                <Text style={styles.featureText}>Blockchain</Text>
+              </View>
             </View>
           </View>
+        </ScrollView>
 
+        <View style={[styles.bottomSection, { paddingBottom: insets.bottom || theme.spacing.xl }]}>
           <Text style={styles.methodTitle}>Choose Login Method</Text>
 
           <Button
@@ -90,6 +99,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             onPress={() => setLoginMethod('email')}
             size="large"
             style={styles.methodButton}
+            fullWidth
           />
 
           <Button
@@ -98,6 +108,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             variant="secondary"
             size="large"
             style={styles.methodButton}
+            fullWidth
           />
 
           <Text style={styles.infoText}>
@@ -111,20 +122,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   if (loginMethod === 'email') {
     return (
       <KeyboardAvoidingView
-        style={styles.container}
+        style={[styles.container, { paddingTop: insets.top }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <View style={styles.emailHeader}>
+          <BackButton onPress={() => setLoginMethod(null)} />
+          <View style={styles.headerSpacer} />
+        </View>
+
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => setLoginMethod(null)}
-          >
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
-
           <Text style={styles.formTitle}>Email Login</Text>
           <Text style={styles.formSubtitle}>
             Enter your credentials to access your account
@@ -159,6 +169,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               loading={loading}
               size="large"
               style={styles.loginButton}
+              fullWidth
             />
           </Card>
 
@@ -171,15 +182,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.walletContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setLoginMethod(null)}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.walletHeader}>
+        <BackButton onPress={() => setLoginMethod(null)} />
+        <View style={styles.headerSpacer} />
+      </View>
 
+      <ScrollView
+        contentContainerStyle={styles.walletScrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.formTitle}>Wallet Login</Text>
         <Text style={styles.formSubtitle}>
           Connect your blockchain wallet to get started
@@ -197,17 +209,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             loading={loading}
             size="large"
             style={styles.connectButton}
+            fullWidth
           />
-
-          <Text style={styles.walletInfo}>
-            Supported wallets: MetaMask, Trust Wallet, WalletConnect
-          </Text>
         </Card>
+
+        <Text style={styles.walletInfo}>
+          Supported wallets: MetaMask, Trust Wallet, WalletConnect
+        </Text>
 
         <Text style={styles.securityNote}>
           🔐 Your wallet connection is secure and encrypted
         </Text>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -217,20 +230,45 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  welcomeContainer: {
+  emailHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+  },
+  walletHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+  },
+  headerSpacer: {
     flex: 1,
-    padding: theme.spacing.xl,
+  },
+  welcomeScrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: theme.spacing.xl,
+    paddingTop: theme.spacing.xxl,
+    paddingBottom: theme.spacing.xl,
     justifyContent: 'center',
+  },
+  contentWrapper: {
     alignItems: 'center',
   },
   scrollContent: {
     padding: theme.spacing.xl,
-    paddingTop: theme.spacing.xxl * 2,
+    paddingTop: theme.spacing.md,
   },
-  walletContainer: {
-    flex: 1,
+  walletScrollContent: {
     padding: theme.spacing.xl,
-    paddingTop: theme.spacing.xxl * 2,
+    paddingTop: theme.spacing.md,
+  },
+  bottomSection: {
+    paddingHorizontal: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.background,
   },
   title: {
     fontSize: theme.typography.fontSize.xxxl,
@@ -250,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginBottom: theme.spacing.xxl,
+    marginTop: theme.spacing.xxl,
   },
   feature: {
     alignItems: 'center',
@@ -278,14 +316,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textTertiary,
     textAlign: 'center',
     marginTop: theme.spacing.lg,
-  },
-  backButton: {
-    marginBottom: theme.spacing.lg,
-  },
-  backButtonText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.primary,
-    fontWeight: theme.typography.fontWeight.semibold,
   },
   formTitle: {
     fontSize: theme.typography.fontSize.xxl,
@@ -330,10 +360,12 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.xs,
     color: theme.colors.textTertiary,
     textAlign: 'center',
+    marginTop: theme.spacing.lg,
   },
   securityNote: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.textSecondary,
     textAlign: 'center',
+    marginTop: theme.spacing.lg,
   },
 });

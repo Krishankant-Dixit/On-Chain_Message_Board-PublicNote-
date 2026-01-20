@@ -3,3 +3,5 @@ export { Card } from './Card';
 export { Input } from './Input';
 export { MessageCard } from './MessageCard';
 export { LoadingScreen } from './LoadingScreen';
+export { ProfileAvatar } from './ProfileAvatar';
+export { BackButton } from './BackButton';

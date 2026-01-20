@@ -11,7 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { Button, Card } from '../components';
+import { Button, Card, ProfileAvatar } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { ChatRoom } from '../utils/helpers';
@@ -99,21 +99,6 @@ export const ChatRoomsScreen: React.FC<ChatRoomsScreenProps> = ({ navigation }) 
     setRefreshing(false);
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: logout,
-        },
-      ]
-    );
-  };
-
   const getRoomTypeIcon = (type: ChatRoom['type']) => {
     switch (type) {
       case 'public':
@@ -151,16 +136,18 @@ export const ChatRoomsScreen: React.FC<ChatRoomsScreenProps> = ({ navigation }) 
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View>
+      <View style={[styles.header, { paddingTop: insets.top || theme.spacing.md }]}>
+        <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>Chat Rooms</Text>
           <Text style={styles.headerSubtitle}>
             {user?.name || 'User'}
           </Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <ProfileAvatar
+          onLogout={() => {
+            // Navigation handled automatically by auth context changes
+          }}
+        />
       </View>
 
       <View style={styles.filterContainer}>
@@ -220,8 +207,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: theme.spacing.md,
-    paddingTop: theme.spacing.xxl,
+    paddingTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
     backgroundColor: theme.colors.backgroundSecondary,
+  },
+  headerLeft: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: theme.typography.fontSize.xl,
@@ -232,14 +223,6 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.primary,
     marginTop: theme.spacing.xs,
-  },
-  logoutButton: {
-    padding: theme.spacing.sm,
-  },
-  logoutText: {
-    color: theme.colors.error,
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
   },
   filterContainer: {
     flexDirection: 'row',

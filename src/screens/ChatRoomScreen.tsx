@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { MessageCard } from '../components';
+import { MessageCard, BackButton, ProfileAvatar } from '../components';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { Message } from '../contracts/MessageBoard';
@@ -225,14 +225,9 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
       <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
       
       {/* Custom Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top || theme.spacing.md }]}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity 
-            onPress={() => navigation.goBack()} 
-            style={styles.backButton}
-          >
-            <Text style={styles.backIcon}>←</Text>
-          </TouchableOpacity>
+          <BackButton onPress={() => navigation.goBack()} />
           
           <View style={styles.roomInfo}>
             <View style={styles.roomIconContainer}>
@@ -248,9 +243,7 @@ export const ChatRoomScreen: React.FC<ChatRoomScreenProps> = ({ navigation, rout
           </View>
         </View>
         
-        <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuIcon}>⋮</Text>
-        </TouchableOpacity>
+        <ProfileAvatar />
       </View>
 
       {/* Messages List */}
@@ -344,24 +337,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.backgroundTertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: theme.spacing.sm,
-  },
-  backIcon: {
-    fontSize: 20,
-    color: theme.colors.text,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
   roomInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    marginLeft: theme.spacing.md,
   },
   roomIconContainer: {
     width: 40,
@@ -396,19 +376,6 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.xs,
     color: theme.colors.textSecondary,
     fontWeight: theme.typography.fontWeight.medium,
-  },
-  menuButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.backgroundTertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  menuIcon: {
-    fontSize: 24,
-    color: theme.colors.text,
-    fontWeight: theme.typography.fontWeight.bold,
   },
   
   // Chat Background
