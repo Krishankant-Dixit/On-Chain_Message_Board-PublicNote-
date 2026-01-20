@@ -1,4 +1,4 @@
-// Modern typography system inspired by professional apps
+// Modern typography system inspired by Google Sans and Material Design
 const fontSize = {
   xs: 11,
   sm: 13,
@@ -11,7 +11,30 @@ const fontSize = {
   display: 42,
 };
 
+// Google Sans style font family (fallbacks for React Native)
+const fontFamily = {
+  // Primary font family
+  sans: 'System' as const,
+  
+  // Google Sans equivalents for different platforms
+  googleSans: {
+    regular: 'GoogleSans-Regular',
+    medium: 'GoogleSans-Medium',
+    bold: 'GoogleSans-Bold',
+  },
+  
+  // System fallbacks
+  system: {
+    ios: 'SF Pro Display',
+    android: 'Roboto',
+    default: 'System',
+  },
+};
+
 export const typography = {
+  // Font family
+  fontFamily,
+  
   // Font sizes
   fontSize,
   // Alias for backward compatibility
@@ -110,4 +133,51 @@ export const typography = {
       lineHeight: 1.4,
     },
   },
+  
+  // Spacing helpers for text elements
+  spacing: {
+    // Paragraph spacing
+    paragraph: 16,
+    
+    // Section spacing
+    section: 24,
+    
+    // Heading margins
+    headingTop: 24,
+    headingBottom: 12,
+    
+    // List item spacing
+    listItem: 8,
+  },
+  
+  // Text utilities
+  utils: {
+    // Truncate text helper
+    truncate: {
+      numberOfLines: 1,
+      ellipsizeMode: 'tail' as const,
+    },
+    
+    // Multi-line truncate
+    truncateMultiline: (lines: number) => ({
+      numberOfLines: lines,
+      ellipsizeMode: 'tail' as const,
+    }),
+  },
+};
+
+// Helper function to get font size with line height
+export const getFontStyle = (
+  size: keyof typeof fontSize,
+  weight?: keyof typeof typography.fontWeight,
+  lineHeight?: keyof typeof typography.lineHeight
+) => ({
+  fontSize: fontSize[size],
+  ...(weight && { fontWeight: typography.fontWeight[weight] }),
+  ...(lineHeight && { lineHeight: typography.lineHeight[lineHeight] }),
+});
+
+// Helper for responsive text scaling (optional, for future use)
+export const scaleFont = (size: number, scaleFactor: number = 1) => {
+  return Math.round(size * scaleFactor);
 };

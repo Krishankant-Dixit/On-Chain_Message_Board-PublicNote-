@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import { Web3Provider } from './src/context/Web3Context';
+import { ThemeProvider } from './src/context/ThemeContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { initializeGemini } from './src/services/geminiService';
 
@@ -20,12 +21,14 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <Web3Provider>
-          <AppNavigator />
-          <StatusBar style="light" />
-        </Web3Provider>
-      </AuthProvider>
+      <ThemeProvider initialTheme="dark">
+        <AuthProvider>
+          <Web3Provider>
+            <AppNavigator />
+            <StatusBar style="light" />
+          </Web3Provider>
+        </AuthProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

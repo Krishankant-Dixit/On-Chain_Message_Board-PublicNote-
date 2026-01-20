@@ -19,7 +19,7 @@ import { theme } from '../theme';
 import { Message } from '../contracts/MessageBoard';
 import { analyzeSentiment } from '../services/geminiService';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
 interface HomeScreenProps {
   navigation: HomeScreenNavigationProp;
@@ -336,16 +336,16 @@ const styles = StyleSheet.create({
   logoContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: theme.spacing.lg,
     shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.2,
     shadowRadius: 16,
-    elevation: 8,
+    elevation: 5,
   },
   logoIcon: {
     fontSize: 40,
@@ -376,17 +376,20 @@ const styles = StyleSheet.create({
   featureCard: {
     width: '48%',
     backgroundColor: theme.colors.card,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     marginBottom: theme.spacing.md,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   featureIconContainer: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.backgroundTertiary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -419,11 +422,14 @@ const styles = StyleSheet.create({
   linkButton: {
     flex: 1,
     backgroundColor: theme.colors.backgroundTertiary,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.md,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   linkIcon: {
     fontSize: theme.typography.fontSize.xl,
@@ -456,7 +462,7 @@ const styles = StyleSheet.create({
   headerIconContainer: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -489,15 +495,15 @@ const styles = StyleSheet.create({
   composeButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 3,
   },
   composeIcon: {
     fontSize: 20,
@@ -524,7 +530,7 @@ const styles = StyleSheet.create({
   emptyIconContainer: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.backgroundTertiary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -559,15 +565,15 @@ const styles = StyleSheet.create({
   fabButton: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.2,
     shadowRadius: 16,
-    elevation: 8,
+    elevation: 6,
   },
   fabIcon: {
     fontSize: 32,

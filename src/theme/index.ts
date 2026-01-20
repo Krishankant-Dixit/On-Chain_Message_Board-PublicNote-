@@ -1,6 +1,7 @@
 import { colors } from './colors';
 import { spacing } from './spacing';
 import { typography } from './typography';
+export { lightTheme, darkTheme, getTheme, defaultTheme, type ThemeColors, type Theme as MaterialTheme } from './theme';
 
 export const theme = {
   colors,

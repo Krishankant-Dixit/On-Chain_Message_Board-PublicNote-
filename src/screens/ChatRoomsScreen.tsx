@@ -252,8 +252,12 @@ const styles = StyleSheet.create({
     paddingBottom: theme.spacing.xxl * 2,
   },
   roomCard: {
-    marginBottom: theme.spacing.md,
-  },
+    marginBottom: theme.spacing.md,    borderRadius: theme.borderRadius.xl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,  },
   roomHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -3,4 +3,7 @@ export { PostMessageScreen } from './PostMessageScreen';
 export { LoginScreen } from './LoginScreen';
 export { ChatRoomsScreen } from './ChatRoomsScreen';
 export { ChatRoomScreen } from './ChatRoomScreen';
+export { ChatScreen } from './ChatScreen';
 export { CreateRoomScreen } from './CreateRoomScreen';
+export { ProfileScreen } from './ProfileScreen';
+export { SettingsScreen } from './SettingsScreen';
